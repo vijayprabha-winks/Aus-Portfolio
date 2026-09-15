@@ -179,7 +179,7 @@ export const TeachingSection: React.FC = () => {
           <div className="badge-pill-light" style={{ marginBottom: '0.6rem', background: 'linear-gradient(135deg, #D97706, #B45309)', color: '#ffffff', borderColor: '#D97706' }}>
             Academic Leadership
           </div>
-          <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.65rem', color: '#000000', marginBottom: '0.4rem', fontWeight: 700 }}>
+          <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(1.25rem, 4vw, 1.65rem)', color: '#000000', marginBottom: '0.4rem', fontWeight: 700 }}>
             {teaching.coordinatorTitle}
           </h3>
           <p style={{ color: '#1E293B', fontSize: '0.98rem', lineHeight: '1.7' }}>

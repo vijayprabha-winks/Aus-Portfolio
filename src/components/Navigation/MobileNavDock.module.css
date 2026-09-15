@@ -1,0 +1,120 @@
+.dockContainer {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .dockContainer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    position: fixed;
+    bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    padding: 6px 12px;
+    background: rgba(10, 12, 20, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: 9999px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 20px rgba(245, 158, 11, 0.2);
+    max-width: calc(100% - 24px);
+    pointer-events: auto;
+  }
+}
+
+.dockBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #94A3B8;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dockBtn:active {
+  transform: scale(0.92);
+}
+
+.activeBtn {
+  color: #FBBF24 !important;
+  background: rgba(245, 158, 11, 0.16);
+}
+
+.activeDot {
+  position: absolute;
+  bottom: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #F59E0B;
+  box-shadow: 0 0 6px #F59E0B;
+}
+
+.monogramBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #D97706, #B45309);
+  color: #FFFFFF;
+  font-family: var(--font-serif);
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(245, 158, 11, 0.6);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+
+.actionDivider {
+  width: 1px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.15);
+  margin: 0 2px;
+}
+
+.cvPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #FBBF24;
+  font-family: var(--font-tech);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.cvPill:active {
+  transform: scale(0.95);
+  background: #D97706;
+  color: #FFFFFF;
+}
+
+.scrollTopBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}

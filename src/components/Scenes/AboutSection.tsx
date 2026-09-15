@@ -84,8 +84,10 @@ export const AboutSection: React.FC = () => {
           </p>
 
           {/* Mathematical Master Formula Feature Box */}
-          <div style={{ display: 'inline-block', background: '#0A0F1D', color: '#FDE68A', padding: '10px 24px', borderRadius: '12px', fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.85rem, 1.4vw, 1.05rem)', letterSpacing: '0.04em', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', marginBottom: '1.8rem', border: '1px solid rgba(245, 158, 11, 0.35)' }}>
-            L_q = [ P₀(λ/μ)ᶜ ρ ] / [ c!(1 - ρ)² ] &nbsp;•&nbsp; π P = π &nbsp;•&nbsp; W = L / λ &nbsp;•&nbsp; ρ &lt; 1
+          <div className="formula-scroll-box" style={{ textAlign: 'center', marginBottom: '1.8rem' }}>
+            <div style={{ display: 'inline-block', background: '#0A0F1D', color: '#FDE68A', padding: '10px 24px', borderRadius: '12px', fontFamily: 'var(--font-mono)', fontSize: 'clamp(0.82rem, 1.4vw, 1.05rem)', letterSpacing: '0.04em', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', border: '1px solid rgba(245, 158, 11, 0.35)', whiteSpace: 'nowrap' }}>
+              L_q = [ P₀(λ/μ)ᶜ ρ ] / [ c!(1 - ρ)² ] &nbsp;•&nbsp; π P = π &nbsp;•&nbsp; W = L / λ &nbsp;•&nbsp; ρ &lt; 1
+            </div>
           </div>
 
           {/* Action Row */}

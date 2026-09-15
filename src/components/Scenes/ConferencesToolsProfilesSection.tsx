@@ -110,7 +110,7 @@ export const ConferencesToolsProfilesSection: React.FC = () => {
           Mathematical & Computational Arsenal
         </h3>
 
-        <div ref={toolsContainerRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
+        <div ref={toolsContainerRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '1.25rem' }}>
           {tools.map((tool, idx) => (
             <div 
               key={idx}
@@ -179,7 +179,7 @@ export const ConferencesToolsProfilesSection: React.FC = () => {
           Verified Researcher Networks & Citations
         </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: '1.25rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '1.25rem' }}>
           {profiles.map((profile, idx) => (
             <a
               key={idx}

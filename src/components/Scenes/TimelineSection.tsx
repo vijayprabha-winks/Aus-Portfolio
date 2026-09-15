@@ -73,7 +73,7 @@ export const TimelineSection: React.FC = () => {
             position: 'absolute',
             top: '20px',
             bottom: '20px',
-            left: '24px',
+            left: 'clamp(12px, 3vw, 24px)',
             width: '3px',
             background: 'linear-gradient(to bottom, #D97706, #F59E0B 60%, rgba(245, 158, 11, 0.2))',
             transformOrigin: 'top center',
@@ -90,7 +90,7 @@ export const TimelineSection: React.FC = () => {
                 key={idx} 
                 style={{
                   position: 'relative',
-                  paddingLeft: '60px'
+                  paddingLeft: 'clamp(36px, 6vw, 60px)'
                 }}
               >
                 {/* Node marker */}
@@ -98,7 +98,7 @@ export const TimelineSection: React.FC = () => {
                   className="timeline-node"
                   style={{
                     position: 'absolute',
-                    left: '12px',
+                    left: 'clamp(0px, 1.5vw, 12px)',
                     top: '0',
                     width: '26px',
                     height: '26px',

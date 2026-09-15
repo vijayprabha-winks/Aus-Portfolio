@@ -90,7 +90,19 @@ export const ResearchSection: React.FC = () => {
       icon={<Layers size={16} />}
     >
       {/* 4 Research Pillars Selector */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px', marginBottom: '2.5rem' }}>
+      <div 
+        className="no-scrollbar"
+        style={{ 
+          display: 'flex', 
+          flexWrap: 'wrap', 
+          justifyContent: 'center', 
+          gap: '8px', 
+          marginBottom: '2.5rem',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          padding: '4px 0'
+        }}
+      >
         {researchPillars.map((pillar) => {
           const isActive = pillar.id === activePillarId;
           return (
@@ -98,17 +110,19 @@ export const ResearchSection: React.FC = () => {
               key={pillar.id}
               onClick={() => setActivePillarId(pillar.id)}
               style={{
-                padding: '10px 22px',
+                padding: '9px 18px',
                 borderRadius: '10px',
                 fontFamily: 'var(--font-tech)',
-                fontSize: '0.88rem',
+                fontSize: '0.85rem',
                 fontWeight: 600,
                 letterSpacing: '0.03em',
                 background: isActive ? 'rgba(245, 158, 11, 0.22)' : 'rgba(10, 15, 29, 0.85)',
                 color: isActive ? '#FBBF24' : '#CBD5E1',
                 border: isActive ? '1px solid #D97706' : '1px solid rgba(255, 255, 255, 0.12)',
                 boxShadow: isActive ? '0 0 20px rgba(245, 158, 11, 0.3)' : 'none',
-                transition: 'all 0.25s ease'
+                transition: 'all 0.25s ease',
+                whiteSpace: 'nowrap',
+                flexShrink: 0
               }}
             >
               {pillar.title.split('&')[0].trim()}
@@ -259,7 +273,7 @@ export const ResearchSection: React.FC = () => {
         </div>
 
         {/* Controls & Metrics */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '2rem' }}>
           {/* Controls */}
           <div>
             <div style={{ marginBottom: '1.25rem' }}>

@@ -280,12 +280,51 @@
 }
 
 @media (max-width: 768px) {
+  .topBadge {
+    top: 14px;
+    font-size: 0.68rem;
+    padding: 5px 12px;
+    letter-spacing: 0.06em;
+    width: max-content;
+    max-width: calc(100% - 24px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .scrollCue {
+    bottom: 64px;
+    font-size: 0.72rem;
+    padding: 6px 14px;
+    gap: 6px;
+    letter-spacing: 0.06em;
+  }
+
   .hudBar {
-    padding: 10px 16px;
-    gap: 10px;
+    bottom: 12px;
+    width: calc(100% - 20px);
+    padding: 8px 12px;
+    gap: 8px;
+    border-radius: 12px;
+  }
+
+  .hudBadge {
+    font-size: 0.64rem;
+    padding: 3px 6px;
   }
 
   .hudTimecode {
     display: none;
+  }
+
+  .hudPercent {
+    font-size: 0.7rem;
+    min-width: 28px;
+  }
+
+  .hudSkipBtn {
+    padding: 5px 10px;
+    font-size: 0.72rem;
+    gap: 4px;
   }
 }

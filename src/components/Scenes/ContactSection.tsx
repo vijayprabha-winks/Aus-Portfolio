@@ -43,9 +43,9 @@ export const ContactSection: React.FC = () => {
       <div 
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
-          gap: '1rem',
-          marginBottom: '3.5rem'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 140px), 1fr))',
+          gap: '0.85rem',
+          marginBottom: '3rem'
         }}
       >
         {statsRecap.map((stat: StatRecapItem, idx: number) => (
@@ -53,7 +53,7 @@ export const ContactSection: React.FC = () => {
             key={idx}
             className="card-light"
             style={{
-              padding: '1.25rem 1.4rem',
+              padding: '1.1rem 1.2rem',
               background: '#FFFFFF',
               border: '1px solid #E2E8F0',
               borderLeft: idx % 2 === 0 ? '4px solid #D97706' : '4px solid #059669'
@@ -76,8 +76,8 @@ export const ContactSection: React.FC = () => {
       <div 
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '2.5rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+          gap: '2rem',
           alignItems: 'start'
         }}
       >

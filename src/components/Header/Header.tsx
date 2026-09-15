@@ -33,10 +33,15 @@ export const Header: React.FC<HeaderProps> = ({ isVisible }) => {
 
   // GSAP slide-in for header on threshold
   useGSAP(() => {
-    if (headerRef.current && isVisible) {
+    if (!headerRef.current) return;
+    if (isVisible) {
       gsap.fromTo(headerRef.current,
         { y: -30, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.45, ease: 'power3.out' }
+      );
+    } else {
+      gsap.to(headerRef.current,
+        { y: -30, opacity: 0, duration: 0.3, ease: 'power2.in' }
       );
     }
   }, { dependencies: [isVisible] });

@@ -250,3 +250,38 @@
   will-change: transform, opacity;
 }
 
+@media (max-width: 768px) {
+  .sceneWrapper {
+    padding: 3.2rem 0 3.8rem;
+  }
+  .headerBlock {
+    margin-bottom: 2rem;
+  }
+  .ambientWatermark {
+    font-size: clamp(5rem, 20vw, 8rem);
+    top: 2%;
+    right: 2%;
+    opacity: 0.03 !important;
+  }
+  .title {
+    font-size: clamp(1.45rem, 6vw, 2.1rem);
+    margin-bottom: 0.8rem;
+  }
+  .titleHighlight {
+    font-size: clamp(0.85rem, 3.5vw, 1.05rem);
+    letter-spacing: 0.08em;
+  }
+  .subtitle {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    padding: 0 0.5rem;
+  }
+  .eyebrow {
+    font-size: 0.72rem;
+    padding: 5px 12px;
+    margin-bottom: 0.9rem;
+    letter-spacing: 0.08em;
+  }
+}
+
+

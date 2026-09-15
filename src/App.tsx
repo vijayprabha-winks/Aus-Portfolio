@@ -6,6 +6,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { FloatingEquations } from './components/Background/FloatingEquations';
 import { Header } from './components/Header/Header';
+import { ReadingProgressBar } from './components/Navigation/ReadingProgressBar';
+import { MobileNavDock } from './components/Navigation/MobileNavDock';
 import { IntroVideo } from './components/IntroVideo/IntroVideo';
 import { AboutSection } from './components/Scenes/AboutSection';
 import { ResearchSection } from './components/Scenes/ResearchSection';
@@ -64,13 +66,19 @@ export const App: React.FC = () => {
 
   return (
     <div style={{ position: 'relative', minHeight: '100vh', width: '100%', backgroundColor: '#000000' }}>
-      {/* 1. Global Floating Mathematical Equations Layer (60fps LaTeX particles) */}
+      {/* 1. Global Top Reading Progress Laser Line */}
+      <ReadingProgressBar />
+
+      {/* 2. Global Floating Mathematical Equations Layer (60fps LaTeX particles) */}
       <FloatingEquations />
 
-      {/* 2. Scroll-Triggered Left-Slide Black Glassmorphism Header */}
+      {/* 3. Scroll-Triggered Left-Slide Black Glassmorphism Header (Hidden on Mobile) */}
       <Header isVisible={isHeaderVisible} />
 
-      {/* 3. Alternating Dark & Light Academic Cinematic Sections */}
+      {/* 4. Mobile Ergonomic Bottom Navigation Dock (Visible on Mobile <= 768px) */}
+      <MobileNavDock />
+
+      {/* 5. Alternating Dark & Light Academic Cinematic Sections */}
       {/* Section 01 [DARK #000000]: Butter-Smooth Scroll-Controlled Cinematic Video Hero */}
       <IntroVideo />
 
@@ -95,7 +103,7 @@ export const App: React.FC = () => {
       {/* Section 08 [LIGHT #FFFFFF]: Academic Collaboration & Inquiries */}
       <ContactSection />
 
-      {/* 4. Academic Footer [DARK #000000] */}
+      {/* 6. Academic Footer [DARK #000000] */}
       <Footer />
     </div>
   );

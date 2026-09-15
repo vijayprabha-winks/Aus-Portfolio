@@ -142,8 +142,39 @@ button {
 
 @media (max-width: 768px) {
   .site-container {
-    padding: 0 1.1rem;
+    padding: 0 1rem;
   }
+  .card-dark, .card-light {
+    padding: 1.4rem 1.2rem !important;
+    border-radius: 14px !important;
+  }
+}
+
+/* Touch & Mobile Formula Utilities */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.formula-scroll-box {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+.formula-scroll-box::-webkit-scrollbar {
+  height: 4px;
+}
+
+.formula-scroll-box::-webkit-scrollbar-thumb {
+  background: rgba(245, 158, 11, 0.4);
+  border-radius: 4px;
 }
 
 /* Section Dark Theme (PURE BLACK) */
