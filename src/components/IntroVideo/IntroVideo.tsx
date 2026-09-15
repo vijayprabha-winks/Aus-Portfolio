@@ -1,10 +1,11 @@
 import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import styles from './IntroVideo.module.css';
 import { ChevronDown, Sparkles } from 'lucide-react';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const VIDEO_SRC = '/videos/Make_the_font_red_orange_neon.mp4';
 
@@ -14,6 +15,7 @@ export const IntroVideo: React.FC = () => {
   const topBadgeRef = useRef<HTMLDivElement>(null);
   const hudRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
+  const beamRef = useRef<HTMLDivElement>(null);
 
   // Direct DOM refs for 60fps HUD updates without triggering React re-renders
   const timecodeRef = useRef<HTMLSpanElement>(null);
@@ -27,16 +29,14 @@ export const IntroVideo: React.FC = () => {
     return `${m.toString().padStart(2, '0')}:${remainder.toFixed(1).padStart(4, '0')}`;
   };
 
+  // Video Autoplay & metadata listener
   useEffect(() => {
     const video = videoRef.current;
-    const container = containerRef.current;
-    if (!video || !container) return;
+    if (!video) return;
 
-    // Autoplay configuration (muted for browser policy compliance)
     video.muted = true;
     video.defaultMuted = true;
     video.playsInline = true;
-
     video.play().catch(() => {});
 
     const onLoadedMetadata = () => {
@@ -46,10 +46,67 @@ export const IntroVideo: React.FC = () => {
     };
 
     video.addEventListener('loadedmetadata', onLoadedMetadata);
+    return () => {
+      video.removeEventListener('loadedmetadata', onLoadedMetadata);
+    };
+  }, []);
 
-    // Dynamic Parallax Transition as User Scrolls from Hero into Section 02
-    const ctx = gsap.context(() => {
-      // Smooth 3D depth parallax scale & fade out as next section enters
+  // GSAP Animations via useGSAP
+  useGSAP(() => {
+    const video = videoRef.current;
+    const topBadge = topBadgeRef.current;
+    const hud = hudRef.current;
+    const cue = cueRef.current;
+    const beam = beamRef.current;
+    const container = containerRef.current;
+
+    // 1. Cinematic Opening Intro Sequence
+    const introTl = gsap.timeline({ delay: 0.2 });
+
+    if (beam) {
+      introTl.fromTo(beam, 
+        { scaleX: 0, transformOrigin: 'center center' }, 
+        { scaleX: 1, duration: 1.2, ease: 'power3.out' }, 
+        0
+      );
+    }
+
+    if (topBadge) {
+      introTl.fromTo(topBadge,
+        { opacity: 0, y: -25, scale: 0.9 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'back.out(1.5)' },
+        0.3
+      );
+    }
+
+    if (hud) {
+      introTl.fromTo(hud,
+        { opacity: 0, y: 35 },
+        { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' },
+        0.5
+      );
+    }
+
+    if (cue) {
+      introTl.fromTo(cue,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
+        0.7
+      );
+
+      // Continuous subtle breathing float
+      gsap.to(cue, {
+        y: 6,
+        repeat: -1,
+        yoyo: true,
+        duration: 1.5,
+        ease: 'sine.inOut',
+        delay: 1.5
+      });
+    }
+
+    // 2. Dynamic Parallax Transition as User Scrolls into Section 02
+    if (video && container) {
       gsap.to(video, {
         scrollTrigger: {
           trigger: container,
@@ -64,9 +121,8 @@ export const IntroVideo: React.FC = () => {
         force3D: true,
       });
 
-      // Subtle float-out of HUD elements as next section starts
-      if (hudRef.current && topBadgeRef.current && cueRef.current) {
-        gsap.to([hudRef.current, topBadgeRef.current, cueRef.current], {
+      if (hud && topBadge && cue) {
+        gsap.to([hud, topBadge, cue], {
           scrollTrigger: {
             trigger: container,
             start: 'top top',
@@ -78,13 +134,8 @@ export const IntroVideo: React.FC = () => {
           ease: 'power2.out',
         });
       }
-    }, container);
-
-    return () => {
-      ctx.revert();
-      video.removeEventListener('loadedmetadata', onLoadedMetadata);
-    };
-  }, []);
+    }
+  }, { scope: containerRef });
 
   // Update progress bar and timecode on every video frame update
   const handleTimeUpdate = () => {
@@ -139,7 +190,7 @@ export const IntroVideo: React.FC = () => {
       <div className={styles.gridOverlay} />
 
       {/* Dynamic Golden Horizon Threshold Beam at the bottom of the video */}
-      <div className={styles.bottomTransitionBeam} />
+      <div ref={beamRef} className={styles.bottomTransitionBeam} />
 
       {/* Minimal Top Brand Badge */}
       <div ref={topBadgeRef} className={styles.topBadge}>

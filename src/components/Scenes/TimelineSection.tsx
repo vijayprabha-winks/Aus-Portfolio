@@ -1,10 +1,57 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import { portfolioData } from '../../data/portfolioData';
 import { CinematicScene } from '../Cinematic/CinematicScene';
 import { Compass, MapPin, CheckCircle2 } from 'lucide-react';
 
+gsap.registerPlugin(ScrollTrigger, useGSAP);
+
 export const TimelineSection: React.FC = () => {
   const { education } = portfolioData;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    const container = containerRef.current;
+    const line = lineRef.current;
+    if (!container || !line) return;
+
+    // 1. Dynamic Golden Timeline Line Drawing with Scroll Scrub
+    gsap.fromTo(line,
+      { scaleY: 0 },
+      {
+        scaleY: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: container,
+          start: 'top 80%',
+          end: 'bottom 85%',
+          scrub: 0.5,
+        }
+      }
+    );
+
+    // 2. Popping Milestone Node Markers as the line travels down
+    const nodes = container.querySelectorAll('.timeline-node');
+    nodes.forEach((node) => {
+      gsap.fromTo(node,
+        { scale: 0, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.5,
+          ease: 'back.out(2.2)',
+          scrollTrigger: {
+            trigger: node,
+            start: 'top 82%',
+            toggleActions: 'play none none reverse',
+          }
+        }
+      );
+    });
+  }, { scope: containerRef });
 
   return (
     <CinematicScene
@@ -18,16 +65,19 @@ export const TimelineSection: React.FC = () => {
       video="/videos/scene-04-timeline.mp4"
       icon={<Compass size={16} />}
     >
-      <div style={{ maxWidth: '880px', margin: '0 auto', position: 'relative' }}>
-        {/* Central Vertical Timeline Track */}
+      <div ref={containerRef} style={{ maxWidth: '880px', margin: '0 auto', position: 'relative' }}>
+        {/* Central Vertical Timeline Track with GSAP dynamic draw */}
         <div 
+          ref={lineRef}
           style={{
             position: 'absolute',
             top: '20px',
             bottom: '20px',
             left: '24px',
             width: '3px',
-            background: 'linear-gradient(to bottom, #D97706, #F59E0B 60%, rgba(245, 158, 11, 0.2))'
+            background: 'linear-gradient(to bottom, #D97706, #F59E0B 60%, rgba(245, 158, 11, 0.2))',
+            transformOrigin: 'top center',
+            zIndex: 1,
           }}
         />
 
@@ -45,6 +95,7 @@ export const TimelineSection: React.FC = () => {
               >
                 {/* Node marker */}
                 <div 
+                  className="timeline-node"
                   style={{
                     position: 'absolute',
                     left: '12px',

@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import styles from './Header.module.css';
 import { portfolioData } from '../../data/portfolioData';
 import { FileDown, Send, Menu, X } from 'lucide-react';
+
+gsap.registerPlugin(useGSAP);
 
 interface HeaderProps {
   isVisible: boolean;
@@ -24,6 +28,33 @@ export const Header: React.FC<HeaderProps> = ({ isVisible }) => {
   const [activeSectionLabel, setActiveSectionLabel] = useState<string>('02 ABOUT');
   const lastPercentRef = React.useRef(0);
   const lastSectionRef = React.useRef('about');
+  const headerRef = useRef<HTMLElement>(null);
+  const mobileDrawerRef = useRef<HTMLDivElement>(null);
+
+  // GSAP slide-in for header on threshold
+  useGSAP(() => {
+    if (headerRef.current && isVisible) {
+      gsap.fromTo(headerRef.current,
+        { y: -30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.45, ease: 'power3.out' }
+      );
+    }
+  }, { dependencies: [isVisible] });
+
+  // GSAP animated mobile drawer
+  useGSAP(() => {
+    if (mobileDrawerRef.current && isMobileNavOpen) {
+      gsap.fromTo(mobileDrawerRef.current,
+        { opacity: 0, y: -10, scale: 0.98 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: 'power2.out' }
+      );
+      const items = mobileDrawerRef.current.querySelectorAll('button');
+      gsap.fromTo(items,
+        { opacity: 0, x: -10 },
+        { opacity: 1, x: 0, duration: 0.25, stagger: 0.03, ease: 'power2.out', delay: 0.05 }
+      );
+    }
+  }, { dependencies: [isMobileNavOpen] });
 
   // Self-contained scroll & active section indicator: updates ONLY Header and ONLY when values change
   React.useEffect(() => {
@@ -86,7 +117,7 @@ export const Header: React.FC<HeaderProps> = ({ isVisible }) => {
   };
 
   return (
-    <header className={`${styles.headerContainer} ${isVisible ? styles.headerVisible : ''}`}>
+    <header ref={headerRef} className={`${styles.headerContainer} ${isVisible ? styles.headerVisible : ''}`}>
       <div className={styles.headerGlass}>
         {/* Scholar Brand / Monogram */}
         <a 
@@ -197,6 +228,7 @@ export const Header: React.FC<HeaderProps> = ({ isVisible }) => {
       {/* Mobile Drawer */}
       {isMobileNavOpen && (
         <div 
+          ref={mobileDrawerRef}
           style={{
             marginTop: '8px',
             background: 'rgba(12, 12, 14, 0.96)',

@@ -1,16 +1,43 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { portfolioData } from '../../data/portfolioData';
 import { CinematicScene } from '../Cinematic/CinematicScene';
 import { Layers, CheckCircle2, AlertTriangle, Play, Sparkles } from 'lucide-react';
 
+gsap.registerPlugin(useGSAP);
+
 export const ResearchSection: React.FC = () => {
   const { researchPillars } = portfolioData;
   const [activePillarId, setActivePillarId] = useState<string>(researchPillars[0].id);
+  const pillarCardRef = useRef<HTMLDivElement>(null);
+  const serverBaysRef = useRef<HTMLDivElement>(null);
 
   // M/M/c Simulator State
   const [lambda, setLambda] = useState<number>(6.0);
   const [mu, setMu] = useState<number>(4.0);
   const [c, setC] = useState<number>(2);
+
+  // Smooth GSAP transition whenever pillar tab switches
+  useGSAP(() => {
+    if (pillarCardRef.current) {
+      gsap.fromTo(pillarCardRef.current,
+        { opacity: 0.5, y: 18, scale: 0.99 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: 'power2.out', force3D: true }
+      );
+    }
+  }, { dependencies: [activePillarId] });
+
+  // Server bays animation on count change
+  useGSAP(() => {
+    if (serverBaysRef.current) {
+      const bays = serverBaysRef.current.children;
+      gsap.fromTo(bays,
+        { scale: 0.85, opacity: 0.6 },
+        { scale: 1, opacity: 1, duration: 0.35, stagger: 0.05, ease: 'back.out(2)' }
+      );
+    }
+  }, { dependencies: [c, lambda, mu] });
 
   const selectedPillar = researchPillars.find(p => p.id === activePillarId) || researchPillars[0];
 
@@ -92,6 +119,7 @@ export const ResearchSection: React.FC = () => {
 
       {/* Highlighted Pillar Spotlight Box (Pure Black Theme) */}
       <div 
+        ref={pillarCardRef}
         data-animate="left"
         className="card-dark"
         style={{
@@ -348,8 +376,28 @@ export const ResearchSection: React.FC = () => {
               Little's Law: L = λ · W &rarr; {metrics.isStable ? `${metrics.L.toFixed(2)} = ${lambda.toFixed(1)} · ${metrics.W.toFixed(2)}s` : 'Divergent'}
             </div>
 
-            {/* Server Bays */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {/* Traffic Intensity Progress Bar */}
+            <div style={{ marginBottom: '1.2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: '#94A3B8', fontFamily: 'var(--font-tech)', marginBottom: '4px' }}>
+                <span>QUEUE UTILIZATION GAUGE</span>
+                <span style={{ color: metrics.rho < 0.8 ? '#34D399' : metrics.rho < 1.0 ? '#FBBF24' : '#F87171', fontWeight: 700 }}>
+                  {metrics.isStable ? `${(metrics.rho * 100).toFixed(1)}% CAPACITY` : 'OVERLOAD 100%+'}
+                </span>
+              </div>
+              <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
+                <div 
+                  style={{ 
+                    width: `${Math.min(metrics.rho * 100, 100)}%`, 
+                    height: '100%', 
+                    background: metrics.rho < 0.8 ? 'linear-gradient(90deg, #059669, #34D399)' : metrics.rho < 1.0 ? 'linear-gradient(90deg, #D97706, #FBBF24)' : 'linear-gradient(90deg, #DC2626, #F87171)', 
+                    transition: 'width 0.35s cubic-bezier(0.4, 0, 0.2, 1), background 0.35s ease' 
+                  }} 
+                />
+              </div>
+            </div>
+
+            {/* Server Bays with GSAP elastic pop on change */}
+            <div ref={serverBaysRef} style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {Array.from({ length: c }).map((_, idx) => (
                 <div 
                   key={idx}

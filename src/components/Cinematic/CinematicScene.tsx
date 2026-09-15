@@ -1,6 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
 import styles from './CinematicScene.module.css';
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export interface CinematicSceneProps {
   id: string;
@@ -42,8 +46,8 @@ export const CinematicScene: React.FC<CinematicSceneProps> = ({
     ? eyebrow.split('//').map(s => s.trim())
     : ['', eyebrow];
 
-  // Ultra-stylish entrance & section transition animations via ScrollTrigger
-  useEffect(() => {
+  // Ultra-stylish entrance & section transition animations via useGSAP
+  useGSAP(() => {
     const section = sectionRef.current;
     const wipe = wipeRef.current;
     const watermark = watermarkRef.current;
@@ -51,155 +55,162 @@ export const CinematicScene: React.FC<CinematicSceneProps> = ({
     const header = headerRef.current;
     if (!section || !content || !header) return;
 
-    const ctx = gsap.context(() => {
-      // 1. Razor-sharp section boundary laser beam
-      if (wipe) {
-        gsap.fromTo(wipe,
-          { scaleX: 0, opacity: 0 },
-          {
-            scrollTrigger: {
-              trigger: section,
-              start: 'top 92%',
-              toggleActions: 'play none none reverse',
-            },
-            scaleX: 1,
-            opacity: 1,
-            duration: 0.8,
-            ease: 'power3.out',
-            force3D: true,
-          }
-        );
-      }
-
-      // 2. Grand Academic Ambient Watermark with Parallax Drift
-      if (watermark) {
-        gsap.fromTo(watermark,
-          { y: 40, opacity: 0 },
-          {
-            scrollTrigger: {
-              trigger: section,
-              start: 'top 85%',
-              end: 'bottom 15%',
-              scrub: 1.0,
-            },
-            y: -50,
-            opacity: isLight ? 0.03 : 0.045,
-            ease: 'none',
-          }
-        );
-      }
-
-      // 3. Section Content Elevation & Reveal
-      gsap.fromTo(content,
-        { y: 30, opacity: 0.9 },
+    // 1. Razor-sharp section boundary laser beam with transformOrigin
+    if (wipe) {
+      gsap.fromTo(wipe,
+        { scaleX: 0, opacity: 0, transformOrigin: 'left center' },
         {
           scrollTrigger: {
             trigger: section,
-            start: 'top 88%',
+            start: 'top 92%',
             toggleActions: 'play none none reverse',
           },
-          y: 0,
+          scaleX: 1,
           opacity: 1,
-          duration: 0.8,
+          duration: 0.9,
+          ease: 'power3.out',
+          force3D: true,
+        }
+      );
+    }
+
+    // 2. Grand Academic Ambient Watermark with Parallax Drift
+    if (watermark) {
+      gsap.fromTo(watermark,
+        { y: 50, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: section,
+            start: 'top 90%',
+            end: 'bottom 10%',
+            scrub: 1.2,
+          },
+          y: -60,
+          opacity: isLight ? 0.035 : 0.05,
+          ease: 'none',
+        }
+      );
+    }
+
+    // 3. Section Content Elevation & Reveal
+    gsap.fromTo(content,
+      { y: 35, opacity: 0.85 },
+      {
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 88%',
+          toggleActions: 'play none none reverse',
+        },
+        y: 0,
+        opacity: 1,
+        duration: 0.85,
+        ease: 'power3.out',
+        force3D: true,
+      }
+    );
+
+    // 4. Staggered Cinema Keynote Header Reveal
+    const eyebrowEl = header.querySelector(`.${styles.eyebrow}`);
+    const titlePrimaryEl = header.querySelector(`.${styles.titlePrimary}`);
+    const titleHighlightEl = header.querySelector(`.${styles.titleHighlight}`);
+    const subtitleEl = header.querySelector(`.${styles.subtitle}`);
+
+    const tlHeader = gsap.timeline({
+      scrollTrigger: {
+        trigger: header,
+        start: 'top 88%',
+        toggleActions: 'play none none reverse',
+      }
+    });
+
+    if (eyebrowEl) {
+      tlHeader.fromTo(eyebrowEl,
+        { opacity: 0, y: 25, scale: 0.9 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'back.out(1.5)', force3D: true }
+      );
+    }
+
+    if (titlePrimaryEl) {
+      tlHeader.fromTo(titlePrimaryEl,
+        { opacity: 0, y: 35, letterSpacing: '0.06em' },
+        { opacity: 1, y: 0, letterSpacing: '0.02em', duration: 0.75, ease: 'power3.out', force3D: true },
+        '-=0.4'
+      );
+    }
+
+    if (titleHighlightEl) {
+      tlHeader.fromTo(titleHighlightEl,
+        { opacity: 0, y: 25, scale: 0.94 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.65, ease: 'power3.out', force3D: true },
+        '-=0.45'
+      );
+    }
+
+    if (subtitleEl) {
+      tlHeader.fromTo(subtitleEl,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out', force3D: true },
+        '-=0.35'
+      );
+    }
+
+    // 5. Individual Card Entrances: stylish, smooth gliding from Left and Right with 3D Depth
+    const rawCards = Array.from(
+      content.querySelectorAll('[data-animate="left"], [data-animate="right"], .card-dark, .card-light')
+    ) as HTMLElement[];
+
+    const animatableCards = rawCards.filter((card) => {
+      let parent = card.parentElement;
+      while (parent && parent !== content) {
+        if (rawCards.includes(parent as HTMLElement)) {
+          return false;
+        }
+        parent = parent.parentElement;
+      }
+      return true;
+    });
+
+    animatableCards.forEach((card, idx) => {
+      const explicitDir = card.getAttribute('data-animate');
+      const isLeft = explicitDir === 'left' || (explicitDir !== 'right' && idx % 2 === 0);
+
+      gsap.fromTo(card,
+        {
+          opacity: 0,
+          x: isLeft ? -40 : 40,
+          y: 35,
+          scale: 0.96,
+          rotateX: 6,
+        },
+        {
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 92%',
+            toggleActions: 'play none none reverse',
+          },
+          opacity: 1,
+          x: 0,
+          y: 0,
+          scale: 1,
+          rotateX: 0,
+          duration: 0.85,
           ease: 'power3.out',
           force3D: true,
         }
       );
 
-      // 4. Staggered Cinema Keynote Header Reveal
-      const eyebrowEl = header.querySelector(`.${styles.eyebrow}`);
-      const titlePrimaryEl = header.querySelector(`.${styles.titlePrimary}`);
-      const titleHighlightEl = header.querySelector(`.${styles.titleHighlight}`);
-      const subtitleEl = header.querySelector(`.${styles.subtitle}`);
+      // Micro-interaction: smooth GSAP hover lift
+      const handleMouseEnter = () => {
+        gsap.to(card, { y: -5, duration: 0.28, ease: 'power2.out', overwrite: 'auto' });
+      };
+      const handleMouseLeave = () => {
+        gsap.to(card, { y: 0, duration: 0.35, ease: 'power2.out', overwrite: 'auto' });
+      };
 
-      const tlHeader = gsap.timeline({
-        scrollTrigger: {
-          trigger: header,
-          start: 'top 88%',
-          toggleActions: 'play none none reverse',
-        }
-      });
-
-      if (eyebrowEl) {
-        tlHeader.fromTo(eyebrowEl,
-          { opacity: 0, y: 25, scale: 0.88 },
-          { opacity: 1, y: 0, scale: 1, duration: 0.65, ease: 'back.out(1.6)', force3D: true }
-        );
-      }
-
-      if (titlePrimaryEl) {
-        tlHeader.fromTo(titlePrimaryEl,
-          { opacity: 0, y: 35, letterSpacing: '0.06em' },
-          { opacity: 1, y: 0, letterSpacing: '0.02em', duration: 0.75, ease: 'power3.out', force3D: true },
-          '-=0.4'
-        );
-      }
-
-      if (titleHighlightEl) {
-        tlHeader.fromTo(titleHighlightEl,
-          { opacity: 0, y: 25, scale: 0.94 },
-          { opacity: 1, y: 0, scale: 1, duration: 0.65, ease: 'power3.out', force3D: true },
-          '-=0.45'
-        );
-      }
-
-      if (subtitleEl) {
-        tlHeader.fromTo(subtitleEl,
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out', force3D: true },
-          '-=0.35'
-        );
-      }
-
-      // 5. Individual Card Entrances: stylish, smooth gliding from Left and Right with 3D Depth
-      const rawCards = Array.from(
-        content.querySelectorAll('[data-animate="left"], [data-animate="right"], .card-dark, .card-light')
-      ) as HTMLElement[];
-
-      const animatableCards = rawCards.filter((card) => {
-        let parent = card.parentElement;
-        while (parent && parent !== content) {
-          if (rawCards.includes(parent as HTMLElement)) {
-            return false;
-          }
-          parent = parent.parentElement;
-        }
-        return true;
-      });
-
-      animatableCards.forEach((card, idx) => {
-        const explicitDir = card.getAttribute('data-animate');
-        const isLeft = explicitDir === 'left' || (explicitDir !== 'right' && idx % 2 === 0);
-
-        gsap.fromTo(card,
-          {
-            opacity: 0,
-            x: isLeft ? -45 : 45,
-            y: 35,
-            scale: 0.95,
-            rotateX: 6,
-          },
-          {
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 92%',
-              toggleActions: 'play none none reverse',
-            },
-            opacity: 1,
-            x: 0,
-            y: 0,
-            scale: 1,
-            rotateX: 0,
-            duration: 0.85,
-            ease: 'power3.out',
-            force3D: true,
-          }
-        );
-      });
-    }, section);
-
-    return () => ctx.revert();
-  }, [isLight]);
+      card.addEventListener('mouseenter', handleMouseEnter);
+      card.addEventListener('mouseleave', handleMouseLeave);
+    });
+  }, { scope: sectionRef, dependencies: [isLight] });
 
   return (
     <section id={id} ref={sectionRef} className={`${styles.sceneWrapper} ${themeClass}`}>

@@ -1,10 +1,36 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { portfolioData } from '../../data/portfolioData';
 import { CinematicScene } from '../Cinematic/CinematicScene';
 import { Network, Presentation, Terminal, Code2, FileText, Cpu, Table, BookOpen, ExternalLink, GraduationCap, FileSearch, IdCard } from 'lucide-react';
 
+gsap.registerPlugin(useGSAP);
+
 export const ConferencesToolsProfilesSection: React.FC = () => {
   const { tools, profiles } = portfolioData;
+  const toolsContainerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!toolsContainerRef.current) return;
+    const toolCards = toolsContainerRef.current.querySelectorAll('.tool-card') as NodeListOf<HTMLElement>;
+
+    toolCards.forEach((card) => {
+      const icon = card.querySelector('.tool-icon');
+      const onEnter = () => {
+        if (icon) {
+          gsap.to(icon, { scale: 1.15, rotate: 6, duration: 0.25, ease: 'back.out(2)' });
+        }
+      };
+      const onLeave = () => {
+        if (icon) {
+          gsap.to(icon, { scale: 1, rotate: 0, duration: 0.3, ease: 'power2.out' });
+        }
+      };
+      card.addEventListener('mouseenter', onEnter);
+      card.addEventListener('mouseleave', onLeave);
+    });
+  }, { scope: toolsContainerRef });
 
   const getToolIcon = (iconName: string) => {
     switch (iconName) {
@@ -84,12 +110,12 @@ export const ConferencesToolsProfilesSection: React.FC = () => {
           Mathematical & Computational Arsenal
         </h3>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
+        <div ref={toolsContainerRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
           {tools.map((tool, idx) => (
             <div 
               key={idx}
               data-animate={idx % 2 === 0 ? "left" : "right"}
-              className="card-dark"
+              className="card-dark tool-card"
               style={{
                 padding: '1.6rem',
                 background: '#0A0F1D',
@@ -102,6 +128,7 @@ export const ConferencesToolsProfilesSection: React.FC = () => {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <div 
+                    className="tool-icon"
                     style={{
                       width: '40px',
                       height: '40px',

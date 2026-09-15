@@ -1,10 +1,47 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { portfolioData } from '../../data/portfolioData';
 import { CinematicScene } from '../Cinematic/CinematicScene';
 import { Trophy, Award } from 'lucide-react';
 
+gsap.registerPlugin(useGSAP);
+
 export const AchievementsSection: React.FC = () => {
   const { achievements } = portfolioData;
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!gridRef.current) return;
+    const cards = gridRef.current.querySelectorAll('.achievement-card') as NodeListOf<HTMLElement>;
+
+    cards.forEach((card) => {
+      const onMouseMove = (e: MouseEvent) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        gsap.to(card, {
+          rotateY: x * 0.04,
+          rotateX: -y * 0.04,
+          transformPerspective: 900,
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      };
+
+      const onMouseLeave = () => {
+        gsap.to(card, {
+          rotateX: 0,
+          rotateY: 0,
+          duration: 0.5,
+          ease: 'power2.out',
+        });
+      };
+
+      card.addEventListener('mousemove', onMouseMove);
+      card.addEventListener('mouseleave', onMouseLeave);
+    });
+  }, { scope: gridRef });
 
   return (
     <CinematicScene
@@ -19,6 +56,7 @@ export const AchievementsSection: React.FC = () => {
       icon={<Trophy size={16} />}
     >
       <div 
+        ref={gridRef}
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
@@ -32,7 +70,7 @@ export const AchievementsSection: React.FC = () => {
             <div 
               key={item.id}
               data-animate={idx % 2 === 0 ? "left" : "right"}
-              className="card-dark"
+              className="card-dark achievement-card"
               style={{
                 padding: '2.4rem',
                 border: isJrf ? '1px solid rgba(245, 158, 11, 0.45)' : '1px solid rgba(217, 119, 6, 0.35)',
